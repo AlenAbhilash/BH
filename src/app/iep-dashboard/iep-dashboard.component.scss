@@ -1,0 +1,142 @@
+:host {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-header {
+  background-color: #01342f; 
+  height: 56px;
+  padding: 0 16px;
+  color: white;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo {
+  height: 32px;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.material-symbols-outlined.icon {
+  color: white;
+  font-size: 24px;
+  margin-left: 16px;
+  cursor: pointer;
+}
+.avatar-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 16px;
+  border: 2px solid #0f795e;  
+  border-radius: 50%;
+  padding: 3px; 
+  box-sizing: content-box; 
+  width: 39px;  
+  height: 39x;
+}
+
+.avatar {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  border: none; 
+  display: block;
+}
+
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: -10px;
+  background-color:  #0f7e62;; 
+  color: white;
+  font-size: 10px;
+  padding: 4px 4px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+.notification-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-container .badge {
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  background-color: #0f7e62;
+  color: white;
+  font-size: 10px;
+  padding:4px 4px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.text-element {
+  font-family: "Arial", "Helvetica", sans-serif;
+  margin: 0;
+   font-weight: 50;
+}
+
+.spaced-title {
+  margin-left: 24px; 
+}
+
+.pip-symbol {
+  font-size: 24px;
+  font-weight: normal; 
+  color: white;
+  margin: 0 12px;
+}
+.icon-with-space {
+  margin-right: 18px;
+}
+.dashboard {
+  display: flex;
+  flex-direction: row;
+}
+
+app-iep-siderbar,
+app-seacrh-filter {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+app-project-dashboard
+{
+margin-left: 30px;
+margin-top: 20px;
+}
+.dashboard {
+  display: flex;
+}
+
+.sidebar-container {
+  width: 300px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+
+  &.collapsed {
+    width: 70px;
+
+    app-seacrh-filter {
+      pointer-events: none; 
+    }
+
+    app-seacrh-filter .material-symbols-outlined {
+      pointer-events: auto; 
+    }
+  }
+}
+
+app-project-dashboard {
+  flex: 1;
+}

@@ -1,0 +1,188 @@
+<div class="container">
+<div class="operations-summary">
+  <div class="left-side">
+    <h2 class="section-title">Operations</h2>
+  </div>
+
+  <div class="right-side">
+    <div class="progress-wrapper"></div>
+
+    <div class="upload-info">
+      <p>Last Uploaded :</p>
+    </div>
+
+    <span class="date-green">{{ ytdDate }}</span>
+
+    <div class="vertical-pipe"></div>
+
+    <h6>YTD</h6>
+
+    <div class="circle-progress-wrapper">
+      <svg class="circle-progress" viewBox="0 0 36 36">
+        <path
+          class="circle-bg"
+          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+        />
+        <path
+          class="circle"
+          [attr.stroke-dasharray]="progressValue + ', 100'"
+          d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+        />
+        <text x="18" y="20.5" class="percentage">{{ progressValue }}%</text>
+      </svg>
+    </div>
+
+    <button kendoButton class="green-btn">Do VS Buy</button>
+  </div>
+</div>
+
+<div class="custom-tab-bar">
+  <div
+    class="custom-tab"
+    *ngFor="let tab of tabs"
+    [class.active]="activeTab === tab"
+    (click)="setActiveTab(tab)"
+  >
+    {{ tab }}
+  </div>
+</div>
+<div *ngIf="activeTab === 'ISPO'">
+<h4 class="project-title">
+  1104096-NCIC III Ammonia/Urea Plant - STCC - Compression, 1104088-Ar Ratawi, 9000133-Leviathan Tex, 1709043-...
+</h4>
+<div *ngIf="showNotification" class="k-notification custom-warning">
+  <span class="material-icons icon-left">notifications_active</span>
+  <span>
+    You have received 
+    <strong>{{ notificationCount }} <span></span></strong> 
+    <span class="highlight-text">primary resource re assignment requests</span>
+    <a (click)="viewRequests()" class="view-link">View requests</a>
+  </span>
+  <button class="material-icons close-icon" (click)="dismissNotification()">close</button>
+</div>
+  <div class="filter-activities-wrapper">
+    <div class="filter-header">
+      <h3>Filter Activities</h3>
+      <div class="filter-tools">
+        <span class="clear-btn">Clear Filter</span>
+        <span class="material-icons">more_vert</span>
+        <span class="material-icons">arrow_drop_down</span>
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <div class="dropdown-group" *ngFor="let label of ['View As', 'Individual', 'Function', 'Role', 'Status', 'Priority', 'Discipline']; let i = index">
+        <label>{{ label }}</label>
+        <select class="dropdown">
+          <option *ngFor="let option of getDropdownOptions(label)">{{ option }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-tags">
+      <button *ngFor="let tag of tags" 
+              class="tag-button" 
+              [ngClass]="{'active-tag': activeTag === tag}" 
+              (click)="setActiveTag(tag)">
+        {{ tag }}
+      </button>
+    </div>
+
+    <div class="date-slider">
+      <button class="arrow-btn" (click)="prevCard()">
+        <span class="material-icons">chevron_left</span>
+      </button>
+
+      <div class="date-cards">
+        <div 
+          *ngFor="let card of dateCards; let i = index"
+          class="date-card"
+          [ngClass]="{'today': card.label === 'Today', 'fw-this-week': card.label.includes('FW 6')}"
+          [hidden]="i < currentCardIndex || i >= currentCardIndex + 3"
+        >
+          <strong>{{ card.label }}</strong>
+          <p>{{ card.info }}</p>
+        </div>
+      </div>
+
+      <button class="arrow-btn" (click)="nextCard()">
+        <span class="material-icons">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="activities-table-wrapper">
+    <div class="activities-header">
+      <div class="left-section">
+        <h3>Activities</h3>
+        <span class="result-count">Result: {{ filteredActivities.length }} Activities</span>
+      </div>
+
+      <div class="right-section">
+        <div class="search-wrapper">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Search in all columns" />
+          <span class="material-symbols-outlined search-icon">search</span>
+        </div>
+        <span class="material-symbols-outlined icon-spacing">zoom_in_map</span>
+        <span class="material-symbols-outlined settings-icon">settings</span>
+      </div>
+    </div>
+
+    <kendo-grid
+      [data]="filteredActivities"
+      [height]="400"
+      [sortable]="true"
+      [pageSize]="10"
+      [pageable]="true"
+    >
+      <kendo-grid-column field="projectId" title="Project ID"></kendo-grid-column>
+
+      <kendo-grid-column field="activityId" title="Activity ID">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.activityId }}
+          <div class="sub-label">{{ dataItem.subLabel }}</div>
+          <span class="material-symbols-outlined small-icon">link</span>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="activityName" title="Activity Name">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <a href="#" class="activity-link">{{ dataItem.activityName }}</a>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="primaryResource" title="Primary Resource Name">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.primaryResource }}
+          <span class="material-symbols-outlined small-icon">badge</span>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="earlyDate" title="Early Date"></kendo-grid-column>
+      <kendo-grid-column field="lateDate" title="Late Date"></kendo-grid-column>
+    </kendo-grid>
+  </div>
+</div>
+<div *ngIf="activeTab === 'VDR'">
+  <h3>VDR Tab Content</h3>
+</div>
+
+<div *ngIf="activeTab === 'VDR Revision'">
+  <h3>VDR Revision Tab Content</h3>
+</div>
+
+<div *ngIf="activeTab === 'VDR Finalization'">
+  <h3>VDR Finalization Tab Content</h3>
+</div>
+
+<div *ngIf="activeTab === 'OTD Trends'">
+  <h3>OTD Trends Tab Content</h3>
+</div>
+
+<div *ngIf="activeTab === 'Engineering Productivity'">
+  <h3>Engineering Productivity Tab Content</h3>
+</div>
+
+<div *ngIf="activeTab === 'Technical Alignment'">
+  <h3>Technical Alignment Tab Content</h3>
+</div>

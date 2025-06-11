@@ -1,0 +1,42 @@
+<div class="login-container">
+  <div class="login-headerimg">
+    <img src="https://i.ibb.co/HL2pYGNB/Logo.png" alt="Logo" class="img-login" />
+  </div>
+
+  <h3>Sign in</h3>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+    <kendo-formfield>
+      <kendo-label for="username">SSO ID<span style="color: red;">*</span></kendo-label>
+      <kendo-textbox
+        formControlName="username"
+        id="username"
+        type="text"
+        autocomplete="off"
+        style="height: 30px;"
+      ></kendo-textbox>
+    </kendo-formfield>
+
+    <kendo-formfield>
+      <kendo-label for="password">Password<span style="color: red;">*</span></kendo-label>
+      <kendo-textbox
+        formControlName="password"
+        id="password"
+        type="password"
+        autocomplete="new-password"
+        style="height: 30px;"
+      ></kendo-textbox>
+    </kendo-formfield>
+
+    <div>
+      <kendo-checkbox #checkedState style="border-width: medium;"></kendo-checkbox>
+      <kendo-label
+        class="k-checkbox-label"
+        [for]="checkedState"
+        text="Remember me"
+        style="color: rgb(120, 120, 120);"
+      ></kendo-label>
+    </div>
+    <button kendoButton type="submit" class="button" style="margin-top: 10px;">Login</button>
+  </form>
+</div>

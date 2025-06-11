@@ -1,0 +1,51 @@
+<kendo-card class="sidebar-card" [class.collapsed]="collapsed">
+  <div class="card-header">
+    <h6 class="card-title">Filter Contracts</h6>
+    <div class="card-icons">
+      <span class="material-symbols-outlined">more_horiz</span>
+<span class="material-symbols-outlined" (click)="toggleSidebar()">arrow_back</span>
+      </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab" [class.active]="activeTab === 'my'" (click)="setActiveTab('my')">My Contract</div>
+    <div class="tab" [class.active]="activeTab === 'all'" (click)="setActiveTab('all')">All Contract</div>
+    <div class="tab" [class.active]="activeTab === 'fav'" (click)="setActiveTab('fav')">Favourites</div>
+  </div>
+
+  <div class="search-container">
+    <input kendoTextBox type="text" class="search-input" placeholder="Search job number or contracts"
+      [(ngModel)]="searchTerm" />
+    <span class="material-symbols-outlined search-icon">search</span>
+  </div>
+
+  <button kendoButton class="advanced-search-btn" (click)="openAdvancedSearch()">
+    <span class="material-symbols-outlined arrow-icon">keyboard_arrow_right</span>
+    Advanced Search
+  </button>
+
+  <div class="result-count">Result: {{ filteredContracts.length }} contracts</div>
+  <div class="filter-scroll-wrapper">
+    <div class="filter-section">
+      <div class="no-results" *ngIf="filteredContracts.length === 0 && searchTerm">
+        No contracts found for "{{ searchTerm }}"
+      </div>
+      <div class="filter-content" *ngIf="filterExpanded">
+        <kendo-treeview [nodes]="projects" kendoTreeViewExpandable kendoTreeViewCheckable kendoTreeViewSelectable
+          textField="name" [children]="fetchChildren" [hasChildren]="hasChildren" [isChecked]="isItemChecked"
+          [(checkedKeys)]="checkedKeys" [(expandedKeys)]="expandedKeys" class="nested-subproject">
+          <ng-template kendoTreeViewNodeTemplate let-dataItem>
+            <div class="nested-subproject" (click)="$event.stopPropagation()">
+              <label>{{ dataItem.name }}</label>
+              <span class="material-symbols-outlined favorite-star" [class.active]="dataItem.favorite"
+                (click)="toggleFavorite(dataItem.id, $event)" title="Favorite {{ dataItem.name }}">
+                star
+              </span>
+            </div>
+          </ng-template>
+        </kendo-treeview>
+
+      </div>
+    </div>
+  </div>
+</kendo-card>
