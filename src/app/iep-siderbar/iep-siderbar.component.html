@@ -1,7 +1,12 @@
 <div class="layout">
   <kendo-drawer-container class="sidebar-container">
     <div class="top-icon-wrapper">
-      <span class="material-symbols-outlined top-icon">device_hub</span>
+      <span class="material-symbols-outlined top-icon"
+            [ngClass]="{'active': isDeviceHubActive}"
+            (click)="onTopIconClick()"
+            style="cursor:pointer;">
+        device_hub
+      </span>
     </div>
     <kendo-drawer
       [mode]="'push'"

@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { ProgressBarModule } from '@progress/kendo-angular-progressbar';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { FormsModule } from '@angular/forms';
+import { ExpansionPanelModule } from '@progress/kendo-angular-layout';
+import { InputsModule } from '@progress/kendo-angular-inputs';
 
 @Component({
   selector: 'app-project-dashboard',
@@ -14,13 +16,20 @@ import { FormsModule } from '@angular/forms';
     NgFor,
     NgIf,
     GridModule,
-    FormsModule,
-    NgClass
+    InputsModule,
+    FormsModule, 
+    NgClass,
+    ExpansionPanelModule
   ],
   templateUrl: './project-dashboard.component.html',
   styleUrls: ['./project-dashboard.component.scss']
 })
 export class ProjectDashboardComponent {
+  @Input() selectedProjectNames: string[] = [];
+  @Input() myContracts: any[] = [];
+  @Input() allContracts: any[] = [];
+  filterPanelExpanded = true;
+
   selectedTabIndex = 0;
   ytdDate: string = this.getCurrentDate();
   progressValue: number = 71;
@@ -58,6 +67,9 @@ export class ProjectDashboardComponent {
   showNotification = true;
 
   searchTerm: string = '';
+
+  // Track selected values for each dropdown filter
+  selectedDropdowns: { [key: string]: string } = {};
 
   dropdownOptions: { [key: string]: string[] } = {
     'View As': ['Individual', 'Function'],
@@ -99,6 +111,13 @@ export class ProjectDashboardComponent {
     },
   ];
 
+  constructor() {
+    // Initialize selectedDropdowns to the first option for each dropdown
+    Object.keys(this.dropdownOptions).forEach(label => {
+      this.selectedDropdowns[label] = this.dropdownOptions[label][0] || '';
+    });
+  }
+
   get filteredActivities() {
     if (!this.searchTerm) return this.activities;
     return this.activities.filter(activity =>
@@ -138,6 +157,22 @@ export class ProjectDashboardComponent {
 
   dismissNotification(): void {
     this.showNotification = false;
+  }
+
+  onGridFilter(value: string): void {
+    this.searchTerm = value;
+  }
+
+  clearFilter(): void {
+    // Reset all dropdowns to default (first option)
+    Object.keys(this.dropdownOptions).forEach(label => {
+      this.selectedDropdowns[label] = this.dropdownOptions[label][0] || '';
+    });
+    // Reset tags to first tag
+    this.activeTag = this.tags[0];
+    // Reset date slider to first card
+    this.currentCardIndex = 0;
+    // Optionally, reset any other filter state here
   }
 
   private getCurrentDate(): string {

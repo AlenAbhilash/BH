@@ -47,121 +47,138 @@
   </div>
 </div>
 <div *ngIf="activeTab === 'ISPO'">
-<h4 class="project-title">
-  1104096-NCIC III Ammonia/Urea Plant - STCC - Compression, 1104088-Ar Ratawi, 9000133-Leviathan Tex, 1709043-...
-</h4>
-<div *ngIf="showNotification" class="k-notification custom-warning">
-  <span class="material-icons icon-left">notifications_active</span>
-  <span>
-    You have received 
-    <strong>{{ notificationCount }} <span></span></strong> 
-    <span class="highlight-text">primary resource re assignment requests</span>
-    <a (click)="viewRequests()" class="view-link">View requests</a>
-  </span>
-  <button class="material-icons close-icon" (click)="dismissNotification()">close</button>
-</div>
-  <div class="filter-activities-wrapper">
-    <div class="filter-header">
-      <h3>Filter Activities</h3>
-      <div class="filter-tools">
-        <span class="clear-btn">Clear Filter</span>
-        <span class="material-icons">more_vert</span>
-        <span class="material-icons">arrow_drop_down</span>
+  <ng-container *ngIf="selectedProjectNames.length > 0; else noProject">
+    <h4 class="project-title">
+      {{ selectedProjectNames.join(', ') }}
+    </h4>
+    <div *ngIf="showNotification" class="k-notification custom-warning">
+      <span class="material-icons icon-left">notifications_active</span>
+      <span>
+        You have received 
+        <strong>{{ notificationCount }} <span></span></strong> 
+        <span class="highlight-text">primary resource re assignment requests</span>
+        <a (click)="viewRequests()" class="view-link">View requests</a>
+      </span>
+      <button class="material-icons close-icon" (click)="dismissNotification()">close</button>
+    </div>
+    <div class="filter-activities-wrapper">
+      <div class="filter-header">
+        <h3>Filter Activities</h3>
+        <div class="filter-tools">
+          <span class="clear-btn" (click)="clearFilter()">Clear Filter</span>
+          <span class="material-icons">more_vert</span>
+          <span class="material-icons"
+                (click)="filterPanelExpanded = !filterPanelExpanded"
+                [style.transform]="filterPanelExpanded ? 'rotate(180deg)' : 'rotate(0deg)'"
+                style="cursor:pointer; transition: transform 0.2s;"
+                >arrow_drop_down</span>
+        </div>
+      </div>
+      <div *ngIf="filterPanelExpanded">
+        <div class="filter-controls">
+          <div class="dropdown-group" *ngFor="let label of ['View As', 'Individual', 'Function', 'Role', 'Status', 'Priority', 'Discipline']; let i = index">
+            <label>{{ label }}</label>
+            <select class="dropdown" [(ngModel)]="selectedDropdowns[label]">
+              <option *ngFor="let option of getDropdownOptions(label)">{{ option }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-tags">
+          <button *ngFor="let tag of tags" 
+                  class="tag-button" 
+                  [ngClass]="{'active-tag': activeTag === tag}" 
+                  (click)="setActiveTag(tag)">
+            {{ tag }}
+          </button>
+        </div>
+        <div class="date-slider">
+          <button class="arrow-btn" (click)="prevCard()">
+            <span class="material-icons">chevron_left</span>
+          </button>
+          <div class="date-cards">
+            <div 
+              *ngFor="let card of dateCards; let i = index"
+              class="date-card"
+              [ngClass]="{'today': card.label === 'Today', 'fw-this-week': card.label.includes('FW 6')}"
+
+              [style.display]="i < currentCardIndex || i >= currentCardIndex + 3 ? 'none' : 'block'"
+            >
+              <strong>{{ card.label }}</strong>
+              <p>{{ card.info }}</p>
+            </div>
+          </div>
+          <button class="arrow-btn" (click)="nextCard()">
+            <span class="material-icons">chevron_right</span>
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="filter-controls">
-      <div class="dropdown-group" *ngFor="let label of ['View As', 'Individual', 'Function', 'Role', 'Status', 'Priority', 'Discipline']; let i = index">
-        <label>{{ label }}</label>
-        <select class="dropdown">
-          <option *ngFor="let option of getDropdownOptions(label)">{{ option }}</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="filter-tags">
-      <button *ngFor="let tag of tags" 
-              class="tag-button" 
-              [ngClass]="{'active-tag': activeTag === tag}" 
-              (click)="setActiveTag(tag)">
-        {{ tag }}
-      </button>
-    </div>
-
-    <div class="date-slider">
-      <button class="arrow-btn" (click)="prevCard()">
-        <span class="material-icons">chevron_left</span>
-      </button>
-
-      <div class="date-cards">
-        <div 
-          *ngFor="let card of dateCards; let i = index"
-          class="date-card"
-          [ngClass]="{'today': card.label === 'Today', 'fw-this-week': card.label.includes('FW 6')}"
-          [hidden]="i < currentCardIndex || i >= currentCardIndex + 3"
-        >
-          <strong>{{ card.label }}</strong>
-          <p>{{ card.info }}</p>
+    <div class="activities-table-wrapper">
+      <div class="activities-header">
+        <div class="left-section">
+          <h3>Activities</h3>
+          <span class="result-count">Result: {{ filteredActivities.length }} Activities</span>
+        </div>
+        <div class="right-section">
+          <div class="search-wrapper">
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search in all columns" />
+            <span class="material-symbols-outlined search-icon">search</span>
+          </div>
+          <span class="material-symbols-outlined icon-spacing">zoom_in_map</span>
+          <span class="material-symbols-outlined settings-icon">settings</span>
         </div>
       </div>
 
-      <button class="arrow-btn" (click)="nextCard()">
-        <span class="material-icons">chevron_right</span>
-      </button>
+      <kendo-grid
+        [data]="filteredActivities"
+        [height]="400"
+        [sortable]="true"
+        [pageSize]="10"
+        [pageable]="true"
+        [selectable]="{ mode: 'multiple', drag: true }"
+        [reorderable]="true"
+        [resizable]="true"
+        [navigable]="['table', 'pager']"
+        [columnMenu]="{ filter: true }"
+      >
+        <kendo-grid-checkbox-column
+          [width]="45"
+          [headerClass]="{ 'text-center': true }"
+          [class]="{ 'text-center': true }"
+          [resizable]="false"
+          [columnMenu]="false"
+          [showSelectAll]="true"
+        ></kendo-grid-checkbox-column>
+        <kendo-grid-column field="projectId" title="Project ID"></kendo-grid-column>
+        <kendo-grid-column field="activityId" title="Activity ID">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.activityId }}
+            <div class="sub-label">{{ dataItem.subLabel }}</div>
+            <span class="material-symbols-outlined small-icon">link</span>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="activityName" title="Activity Name">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <a href="#" class="activity-link">{{ dataItem.activityName }}</a>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="primaryResource" title="Primary Resource Name">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.primaryResource }}
+            <span class="material-symbols-outlined small-icon">badge</span>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="earlyDate" title="Early Date"></kendo-grid-column>
+        <kendo-grid-column field="lateDate" title="Late Date"></kendo-grid-column>
+      </kendo-grid>
     </div>
-  </div>
-
-  <div class="activities-table-wrapper">
-    <div class="activities-header">
-      <div class="left-section">
-        <h3>Activities</h3>
-        <span class="result-count">Result: {{ filteredActivities.length }} Activities</span>
-      </div>
-
-      <div class="right-section">
-        <div class="search-wrapper">
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Search in all columns" />
-          <span class="material-symbols-outlined search-icon">search</span>
-        </div>
-        <span class="material-symbols-outlined icon-spacing">zoom_in_map</span>
-        <span class="material-symbols-outlined settings-icon">settings</span>
-      </div>
+  </ng-container>
+  <ng-template #noProject>
+    <div style="display: flex; justify-content: center; align-items: center; min-height: 300px;">
+      <h4 class="project-title" style="margin: 0;">No project selected</h4>
     </div>
-
-    <kendo-grid
-      [data]="filteredActivities"
-      [height]="400"
-      [sortable]="true"
-      [pageSize]="10"
-      [pageable]="true"
-    >
-      <kendo-grid-column field="projectId" title="Project ID"></kendo-grid-column>
-
-      <kendo-grid-column field="activityId" title="Activity ID">
-        <ng-template kendoGridCellTemplate let-dataItem>
-          {{ dataItem.activityId }}
-          <div class="sub-label">{{ dataItem.subLabel }}</div>
-          <span class="material-symbols-outlined small-icon">link</span>
-        </ng-template>
-      </kendo-grid-column>
-
-      <kendo-grid-column field="activityName" title="Activity Name">
-        <ng-template kendoGridCellTemplate let-dataItem>
-          <a href="#" class="activity-link">{{ dataItem.activityName }}</a>
-        </ng-template>
-      </kendo-grid-column>
-
-      <kendo-grid-column field="primaryResource" title="Primary Resource Name">
-        <ng-template kendoGridCellTemplate let-dataItem>
-          {{ dataItem.primaryResource }}
-          <span class="material-symbols-outlined small-icon">badge</span>
-        </ng-template>
-      </kendo-grid-column>
-
-      <kendo-grid-column field="earlyDate" title="Early Date"></kendo-grid-column>
-      <kendo-grid-column field="lateDate" title="Late Date"></kendo-grid-column>
-    </kendo-grid>
-  </div>
+  </ng-template>
 </div>
 <div *ngIf="activeTab === 'VDR'">
   <h3>VDR Tab Content</h3>

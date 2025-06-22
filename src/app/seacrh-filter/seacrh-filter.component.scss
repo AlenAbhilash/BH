@@ -168,7 +168,11 @@
         transition: color 0.3s;
 
         &.active {
-          color: #087256; 
+          color: #FFD600; /* yellow for favorite */
+        }
+
+        &.parent-fav {
+          color: #43A047; /* green for parent favorite */
         }
       }
     }
@@ -218,7 +222,11 @@
             transition: color 0.3s;
 
             &.active {
-              color: #087256; 
+              color: #FFD600; /* yellow for favorite */
+            }
+
+            &.parent-fav {
+              color: #43A047; /* green for parent favorite */
             }
           }
         }
@@ -254,8 +262,11 @@
               transition: color 0.3s;
 
               &.active {
-                color: #087256; 
-                color: #087256 ;
+                color: #FFD600; /* yellow for favorite */
+              }
+
+              &.parent-fav {
+                color: #43A047; /* green for parent favorite */
               }
             }
           }

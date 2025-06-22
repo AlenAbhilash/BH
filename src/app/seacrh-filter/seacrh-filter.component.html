@@ -3,8 +3,10 @@
     <h6 class="card-title">Filter Contracts</h6>
     <div class="card-icons">
       <span class="material-symbols-outlined">more_horiz</span>
-<span class="material-symbols-outlined" (click)="toggleSidebar()">arrow_back</span>
-      </div>
+      <span class="material-symbols-outlined" (click)="toggleSidebar()">
+        {{ collapsed ? 'arrow_forward' : 'arrow_back' }}
+      </span>
+    </div>
   </div>
 
   <div class="tab-bar">
@@ -31,20 +33,27 @@
         No contracts found for "{{ searchTerm }}"
       </div>
       <div class="filter-content" *ngIf="filterExpanded">
-        <kendo-treeview [nodes]="projects" kendoTreeViewExpandable kendoTreeViewCheckable kendoTreeViewSelectable
+        <kendo-treeview
+          [nodes]="filteredContracts"
+          kendoTreeViewExpandable kendoTreeViewCheckable kendoTreeViewSelectable
           textField="name" [children]="fetchChildren" [hasChildren]="hasChildren" [isChecked]="isItemChecked"
-          [(checkedKeys)]="checkedKeys" [(expandedKeys)]="expandedKeys" class="nested-subproject">
+          [(checkedKeys)]="checkedKeys" [(expandedKeys)]="expandedKeys" class="nested-subproject"
+          (checkedKeysChange)="onCheckedKeysChange($event)">
           <ng-template kendoTreeViewNodeTemplate let-dataItem>
             <div class="nested-subproject" (click)="$event.stopPropagation()">
               <label>{{ dataItem.name }}</label>
-              <span class="material-symbols-outlined favorite-star" [class.active]="dataItem.favorite"
+              <span class="material-symbols-outlined favorite-star"
+                [ngClass]="{
+                  'active': dataItem.favorite,
+                  'parent-fav': hasChildren(dataItem) && dataItem.favorite
+                }"
+                [style.color]="hasChildren(dataItem) && dataItem.favorite ? '#43A047' : (dataItem.favorite ? '#FFD600' : '#BDBDBD')"
                 (click)="toggleFavorite(dataItem.id, $event)" title="Favorite {{ dataItem.name }}">
                 star
               </span>
             </div>
           </ng-template>
         </kendo-treeview>
-
       </div>
     </div>
   </div>

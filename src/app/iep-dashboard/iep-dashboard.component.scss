@@ -9,6 +9,8 @@
   height: 56px;
   padding: 0 16px;
   color: white;
+  position: relative;
+  z-index: 2100;
 }
 
 .header-inner {
@@ -98,6 +100,7 @@
 }
 .icon-with-space {
   margin-right: 18px;
+  cursor: pointer;
 }
 .dashboard {
   display: flex;
@@ -139,4 +142,57 @@ margin-top: 20px;
 
 app-project-dashboard {
   flex: 1;
+}
+
+/* Overlay Kendo Drawer styles */
+.k-overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 2000;
+}
+.kendo-overlay-sidebar {
+  position: fixed;
+  top: 56px; /* Move below the header (header height is 56px) */
+  left: 0;
+  height: calc(100vh - 56px); /* Adjust height to not overlap header */
+  z-index: 2001;
+  box-shadow: 4px 0 24px 0 rgba(0,0,0,0.25);
+  background: #fff;
+  padding-top: 24px;
+  width: 300px;
+  min-width: 300px;
+  max-width: 340px;
+}
+.drawer-item.active, .kendo-overlay-sidebar .drawer-item.active {
+  background: #fff; 
+  color: #0f7e62;
+  font-weight: bold;
+  border-radius: 0;
+}
+.drawer-item {
+  transition: background 0.2s, color 0.2s;
+}
+.drawer-item .sidebar-icon {
+  color: #757575;
+  transition: color 0.2s;
+}
+.drawer-item.active .sidebar-icon {
+  color: #0f7e62; /* Kendo green for active icon */
+}
+
+.icon-with-space.active-green,
+.drawer-item.active .sidebar-icon,
+.drawer-item.active span,
+.material-symbols-outlined.sidebar-icon.active-green,
+span.active-green {
+  color: #0f7e62 !important;
+}
+
+.overlay-header-visible {
+  z-index: 2100;
+  position: relative;
 }
